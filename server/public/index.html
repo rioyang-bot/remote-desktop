@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RD 遠端控制</title>
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <!-- 連線畫面 -->
+  <main id="connect-view" class="center">
+    <form id="connect-form" class="card" autocomplete="off">
+      <h1>遠端控制</h1>
+      <p class="muted">輸入對方電腦上顯示的 ID 與密碼</p>
+      <label>對方 ID
+        <input id="in-id" inputmode="numeric" placeholder="123 456 789" required>
+      </label>
+      <label>密碼
+        <span class="pw-wrap">
+          <input id="in-pw" type="password" required>
+          <button id="pw-eye" class="eye" type="button" title="顯示密碼" aria-label="顯示密碼"></button>
+        </span>
+      </label>
+      <details>
+        <summary>進階</summary>
+        <label>影像編碼
+          <select id="in-codec">
+            <option value="H264" selected>H.264（建議，硬體編碼）</option>
+            <option value="VP9">VP9</option>
+            <option value="AV1">AV1</option>
+            <option value="VP8">VP8</option>
+          </select>
+        </label>
+      </details>
+      <button id="btn-connect" type="submit">連線</button>
+      <p id="connect-status" class="status" role="status"></p>
+    </form>
+  </main>
+
+  <!-- 遠端畫面 -->
+  <section id="session-view" hidden>
+    <video id="remote" autoplay playsinline muted disablepictureinpicture></video>
+    <div id="hotzone"></div>
+    <nav id="toolbar">
+      <span id="tb-title" class="tb-title"></span>
+      <label title="選擇要顯示的螢幕">螢幕
+        <select id="tb-display"></select>
+      </label>
+      <label title="畫質預設">畫質
+        <select id="tb-quality">
+          <option value="speed">流暢優先（30fps）</option>
+          <option value="balanced" selected>平衡（60fps）</option>
+          <option value="quality">高畫質（60fps）</option>
+          <option value="lan">區網極速</option>
+        </select>
+      </label>
+      <label title="文字清晰：保持解析度；動態流暢：保持幀率">模式
+        <select id="tb-mode">
+          <option value="detail" selected>文字清晰</option>
+          <option value="motion">動態流暢</option>
+        </select>
+      </label>
+      <button id="tb-stats" type="button" title="顯示延遲與幀率">統計</button>
+      <button id="tb-full" type="button" title="全螢幕（可攔截 Win、Alt+Tab 等快捷鍵）">全螢幕</button>
+      <button id="tb-end" type="button" class="danger">中斷</button>
+    </nav>
+    <pre id="stats" hidden></pre>
+    <div id="overlay" hidden></div>
+  </section>
+
+  <script src="sha256.js"></script>
+  <script src="viewer.js"></script>
+</body>
+</html>

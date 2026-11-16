@@ -1,0 +1,50 @@
+{
+  "name": "rd-host",
+  "productName": "RD Host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "遠端桌面被控端 (Windows)",
+  "main": "main.js",
+  "scripts": {
+    "prestart": "node scripts/sync-viewer.js",
+    "start": "electron .",
+    "predist": "node scripts/sync-viewer.js",
+    "dist": "electron-builder --win portable nsis"
+  },
+  "build": {
+    "appId": "local.rd.host",
+    "productName": "RD Host",
+    "files": [
+      "main.js",
+      "preload.js",
+      "viewer-preload.js",
+      "lib/**",
+      "renderer/**",
+      "viewer-web/**"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**",
+      "node_modules/@koromix/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "include": "build/installer.nsh"
+    }
+  },
+  "dependencies": {
+    "koffi": "^3.3.8",
+    "ws": "^8.23.0"
+  },
+  "devDependencies": {
+    "electron": "^45.3.3",
+    "electron-builder": "^26.18.0"
+  }
+}

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+server/data/
+deploy/data/
+deploy/.env
+server/.env
+host/viewer-web/
+docs/

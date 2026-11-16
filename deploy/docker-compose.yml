@@ -1,0 +1,63 @@
+# 遠端桌面伺服器：信令 + 控制端網頁 + HTTPS + TURN 中繼
+# 使用方式見 README.md「部署到伺服器」
+services:
+  server:
+    build: ../server
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      TRUST_PROXY: "1"
+      STUN_URLS: "stun:${DOMAIN}:3478"
+      TURN_URLS: "turn:${DOMAIN}:3478?transport=udp,turn:${DOMAIN}:3478?transport=tcp"
+      TURN_SECRET: "${TURN_SECRET}"
+    volumes:
+      - rd_data:/app/data # 裝置 ID 註冊表
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2.8.4
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: "${DOMAIN}"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - server
+
+  coturn:
+    image: coturn/coturn:4.6.3
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - -n
+      - --listening-port=3478
+      - --min-port=49160
+      - --max-port=49300
+      - --use-auth-secret
+      - --static-auth-secret=${TURN_SECRET}
+      - --realm=${DOMAIN}
+      - --external-ip=${PUBLIC_IP}
+      - --fingerprint
+      - --no-cli
+      - --no-tls
+      - --no-dtls
+      - --no-multicast-peers
+      # 禁止透過 TURN 連到伺服器所在的內網，避免被當跳板
+      - --denied-peer-ip=0.0.0.0-0.255.255.255
+      - --denied-peer-ip=10.0.0.0-10.255.255.255
+      - --denied-peer-ip=100.64.0.0-100.127.255.255
+      - --denied-peer-ip=127.0.0.0-127.255.255.255
+      - --denied-peer-ip=169.254.0.0-169.254.255.255
+      - --denied-peer-ip=172.16.0.0-172.31.255.255
+      - --denied-peer-ip=192.168.0.0-192.168.255.255
+
+volumes:
+  rd_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,14 @@
+{
+  "name": "rd-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "遠端桌面信令伺服器 + 控制端網頁",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/sha256.test.js"
+  },
+  "dependencies": {
+    "ws": "^8.23.0"
+  }
+}

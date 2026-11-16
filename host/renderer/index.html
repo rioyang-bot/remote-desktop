@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src ws: wss:; media-src 'self' blob: mediastream:; img-src 'self' data:">
+  <title>RD Host</title>
+  <link rel="stylesheet" href="host.css">
+</head>
+<body>
+  <header>
+    <span id="dot" class="dot"></span>
+    <span id="status">啟動中…</span>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="label">本機名稱（其他電腦用這個連線）</div>
+      <div class="row">
+        <div id="my-name" class="big mono">—</div>
+        <button id="copy-name" class="ghost" type="button" title="複製">複製</button>
+      </div>
+      <small id="my-ip" class="hint"></small>
+      <small id="ts-warn" class="hint warn" hidden></small>
+    </section>
+
+    <section class="card">
+      <div class="label">一次性密碼</div>
+      <div class="row">
+        <div id="otp" class="big mono pw">********</div>
+        <button id="otp-eye" class="ghost eye" type="button" title="顯示密碼" aria-label="顯示密碼"></button>
+        <button id="copy-otp" class="ghost" type="button" title="複製">複製</button>
+        <button id="refresh-otp" class="ghost" type="button" title="換一組新密碼">更換</button>
+      </div>
+      <p class="hint">設定固定密碼後，兩種密碼都能使用。自己的電腦建議用固定密碼（在下方「設定」）。</p>
+    </section>
+
+    <section id="session-card" class="card active" hidden>
+      <div class="label">遠端控制中</div>
+      <div class="row">
+        <div id="session-info" class="mono"></div>
+        <button id="end-session" class="danger" type="button">中斷連線</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="label">控制其他電腦</div>
+      <ul id="pc-list" class="favs"></ul>
+      <p id="pc-empty" class="hint" hidden>Tailscale 網路裡還沒有其他 Windows 電腦。在其他電腦安裝 Tailscale 並登入同一個帳號後，就會出現在這裡。</p>
+      <form id="connect-form" class="field" autocomplete="off">
+        <div class="row two">
+          <input id="c-target" placeholder="電腦名稱或 IP" spellcheck="false">
+          <span class="pw-wrap">
+            <input id="c-pw" type="password" placeholder="密碼" autocomplete="off">
+            <button class="eye in-input" type="button" data-for="c-pw" title="顯示密碼" aria-label="顯示密碼"></button>
+          </span>
+        </div>
+        <div class="row">
+          <label class="check"><input id="c-remember" type="checkbox" checked> 記住密碼</label>
+          <button type="submit">連線</button>
+        </div>
+        <small id="c-msg" class="hint"></small>
+      </form>
+    </section>
+
+    <details class="card">
+      <summary>設定</summary>
+      <div class="field">
+        <label>目前固定密碼</label>
+        <div class="row">
+          <div id="perm-show" class="mono pw-show">尚未設定</div>
+          <button id="perm-eye" class="ghost eye" type="button" title="顯示密碼" aria-label="顯示密碼" hidden></button>
+          <button id="clear-perm" type="button" class="ghost" hidden>清除</button>
+        </div>
+        <small id="perm-state" class="hint"></small>
+      </div>
+      <form id="perm-form" class="field">
+        <label for="perm-pw">設定新的固定密碼（至少 8 字元）</label>
+        <div class="row">
+          <span class="pw-wrap">
+            <input id="perm-pw" type="password" autocomplete="new-password">
+            <button class="eye in-input" type="button" data-for="perm-pw" title="顯示密碼" aria-label="顯示密碼"></button>
+          </span>
+          <button type="submit">設定</button>
+        </div>
+      </form>
+      <label class="check"><input id="auto-start" type="checkbox"> 開機時自動啟動（背景執行）</label>
+      <small id="version" class="hint"></small>
+    </details>
+
+    <details class="card">
+      <summary>紀錄</summary>
+      <pre id="log"></pre>
+    </details>
+  </main>
+
+  <script src="host.js"></script>
+</body>
+</html>
