@@ -55,6 +55,9 @@ function startSignaling({ port = DEFAULT_PORT, bind, log = () => {} } = {}) {
     maxPayload: 256 * 1024,
     verifyClient: ({ req }) => allowed(normIp(req.socket.remoteAddress)),
   });
+  // ws 會把 http 伺服器的錯誤（例如連接埠被占用）再轉拋到 wss；
+  // 沒人接的話會變成未處理例外、跳出錯誤對話框。錯誤已由下方 listen 的 Promise 回報。
+  wss.on('error', () => {});
 
   const send = (ws, obj) => {
     if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj));

@@ -24,6 +24,9 @@ app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
 // 不要用 mDNS 隱藏區網 IP，讓同網段可以直接 P2P；關閉視窗遮蔽偵測避免擷取被節流
 app.commandLine.appendSwitch('disable-features', 'WebRtcHideLocalIpsWithMdns,CalculateNativeWinOcclusion');
 
+// 開發測試用：同一台電腦跑第二個 RD Host（另一個設定資料夾），例如一個當被控端、一個當控制端
+if (process.env.RD_USER_DATA) app.setPath('userData', process.env.RD_USER_DATA);
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
   process.exit(0);
@@ -403,6 +406,12 @@ function registerIpc() {
   });
   ipcMain.on('viewer-auth-ok', (e, password) => {
     if (typeof password === 'string' && password.length <= 256) rememberOnSuccess(viewerMeta.get(e.sender.id), password);
+  });
+  // 控制端：遠端畫面出現後，把主視窗收到系統匣，只留下遠端視窗（系統匣圖示可以叫回來）
+  ipcMain.on('viewer-connected', (e) => {
+    const w = BrowserWindow.fromWebContents(e.sender);
+    if (!w || ![...viewers.values()].includes(w)) return;
+    if (win && win.isVisible()) win.hide();
   });
   ipcMain.on('viewer-close', (e) => {
     const w = BrowserWindow.fromWebContents(e.sender);

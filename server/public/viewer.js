@@ -294,6 +294,7 @@
     $('tb-title').textContent = /^\d{9}$/.test(id) ? id.replace(/(\d{3})(?=\d)/g, '$1 ') : id;
     setStatus('');
     $('remote').focus();
+    if (desktopApp && desktopApp.connected) desktopApp.connected();
     const tb = $('toolbar');
     tb.classList.add('show');
     setTimeout(() => tb.classList.remove('show'), 2500);

@@ -11,4 +11,6 @@ contextBridge.exposeInMainWorld('rdViewer', {
   close: () => ipcRenderer.send('viewer-close'),
   /** 密碼驗證成功：程式依使用者的選擇記住這組密碼 */
   authOk: (password) => ipcRenderer.send('viewer-auth-ok', String(password || '')),
+  /** 遠端畫面已經出現：程式把主視窗收到系統匣 */
+  connected: () => ipcRenderer.send('viewer-connected'),
 });

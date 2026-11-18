@@ -141,6 +141,7 @@ async function init() {
 
 /** 依「本機註冊狀態 + Tailscale 狀態」更新上方的狀態列 */
 function updateStatus() {
+  if (st && st.signalError) return setStatus('無法啟動：' + st.signalError, 'err'); // 不要被定時更新蓋掉
   if (session) return setStatus('遠端控制中', 'live');
   if (!ready) return setStatus('啟動中…');
   if (!tsInfo || tsInfo.tailscale !== 'running') return setStatus('Tailscale 未連線，其他電腦連不到這台', 'err');
